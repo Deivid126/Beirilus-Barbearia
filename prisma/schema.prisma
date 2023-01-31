@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  startDate   String   @unique
+  endDate     String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  customer    User     @relation(fields: [customerId], references: [id])
+  customerId  String   @db.ObjectId
+  Services    Services @relation(fields: [servicesId], references: [id])
+  servicesId  String   @db.ObjectId
+  Barber      Employee @relation(fields: [barberId], references: [id])
+  barberId    String   @db.ObjectId
+  linkGoogle  String
+  linkOutlook String
+}
+
+model User {
+  id         String     @id @default(auto()) @map("_id") @db.ObjectId
+  email      String     @unique
+  name       String
+  phone      String     @default("00-00000-0000")
+  birth      DateTime
+  passwd     String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  booking    Booking[]
+  typeUser   TypeUser?  @relation(fields: [typeUserId], references: [id])
+  typeUserId String?    @db.ObjectId
+  Employee   Employee[]
+
+  @@map("Users")
+}
+
+model Employee {
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  booking   Booking[]
+  user      User      @relation(fields: [userId], references: [id])
+  userId    String    @db.ObjectId
+
+  @@map("Barbers")
+}
+
+model Services {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  price       String
+  name        String
+  description String
+  duration    Int
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  booking     Booking[]
+
+  @@map("Services")
+}
+
+model TypeUser {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  type      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User[]
+
+  @@map("Types")
+}
+
+model Config {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  mail_host        String?
+  mail_port        String?
+  mail_username    String
+  mail_passwd      String
+  mail_displayname String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
