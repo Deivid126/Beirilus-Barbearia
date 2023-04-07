@@ -9,6 +9,6 @@ O projeto usa de Node.js com Typescript, Express e MongoDB como banco de dados n
 
 git clone https://github.com/Deivid126/Beirilus-Barbearia.git
 
-cd beirulis
+cd beirilus
 
 npm install 
